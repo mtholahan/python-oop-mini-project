@@ -1,6 +1,7 @@
 import sys
 import db
 from account import BankAccount
+from customer import Customer
 
 def display_menu():
     """Display the main menu."""
@@ -13,108 +14,134 @@ def display_menu():
     print("6. View Transaction History")
     print("7. Exit")
 
+
 def create_customer():
-    """Prompt user for customer details and store in database."""
-    print("\n[Create a New Customer]")
-    first_name = input("Enter first name: ").strip()
-    last_name = input("Enter last name: ").strip()
-    email = input("Enter email: ").strip()
-    phone = input("Enter phone number (optional): ").strip() or None
-    result = db.create_customer(first_name, last_name, email, phone)
-    print(result)
+    """Handles user input for creating a new customer"""
+    print("\n[Creating New Customer]")
+
+    try:
+        first_name = input("Enter first name: ").strip()
+        last_name = input("Enter last name: ").strip()
+        email = input("Enter email: ").strip()
+        phone = input("Enter phone number: ").strip()
+
+        # Create a Customer object and save to DB
+        customer = Customer(first_name, last_name, email, phone)
+        customer.save_to_db()  # Saves and assigns a customer_id
+
+        print(f"Customer {customer.first_name} {customer.last_name} created successfully with ID {customer.customer_id}.")
+        print(f"Email: {customer.email}, Phone: {customer.phone}")
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
 
 def open_account():
-    """Open a new account for an existing customer."""
-    print("\n[Opening a New Account]")
-    customer_id = input("Enter Customer ID: ").strip()
-    account_type = input("Enter Account Type (Checking/Savings): ").strip().capitalize()
+    """Handles user input for opening a new account"""
+    print("\n[Opening New Account]")
+    customer_id = input("Enter your Customer ID: ").strip()
+
+    if not customer_id.isdigit():
+        print("Invalid Customer ID.")
+        return
+
+    customer = Customer.get_by_id(int(customer_id))
+    if not customer:
+        print("Customer not found. Please create a customer first.")
+        return
+
+    print(f"✅ Customer found: {customer.first_name} {customer.last_name}")
+
+    account_type = input("Enter account type (Checking/Savings): ").strip().capitalize()
     if account_type not in ["Checking", "Savings"]:
         print("Invalid account type. Please enter 'Checking' or 'Savings'.")
         return
 
-    result = db.create_account(customer_id, account_type)
-    print(result)
+    initial_balance = input("Enter initial deposit amount: ").strip()
+    if not initial_balance.replace('.', '', 1).isdigit():
+        print("Invalid deposit amount.")
+        return
 
-def get_account(account_id):
-    """Retrieve an account from the database and return a BankAccount object."""
-    account_data = db.get_account(account_id)  # Fetch from database
-    if not account_data:
-        print("Account not found.")
-        return None
+    initial_balance = float(initial_balance)
 
-    account_id, account_type, balance, customer_id = account_data
-    return BankAccount(account_id, account_type, balance, customer_id)
+    # Create and save the account
+    new_account = BankAccount(customer.customer_id, account_type, initial_balance)
+    new_account.save_to_db()
+
+    print(f"✅ {account_type} account created successfully with balance ${initial_balance:.2f}.")
+
 
 def deposit_funds():
-    """Handles depositing funds into an account."""
+    """Handles deposits through the CLI"""
     print("\n[Depositing Funds]")
     account_id = input("Enter Account ID: ").strip()
-    account = get_account(account_id)
+    account = BankAccount.get_by_id(int(account_id))
     if not account:
+        print("Account not found.")
         return
 
     amount = input("Enter deposit amount: ").strip()
-    try:
-        amount = float(amount)
-        if amount <= 0:
-            print("Invalid amount. Must be a positive number.")
-            return
-    except ValueError:
-        print("Invalid input. Please enter a numerical amount.")
+    if not amount.replace('.', '', 1).isdigit():
+        print("Invalid deposit amount.")
         return
 
-    result = account.deposit(amount)
-    print(result)
+    amount = float(amount)
+
+    try:
+        account.deposit(amount)
+        print(f"✅ Deposited ${amount:.2f} into Account {account_id}.")
+    except ValueError as e:
+        print(f"❌ {e}")
+
 
 def withdraw_funds():
-    """Handles withdrawing funds from an account."""
+    """Handles withdrawals through the CLI"""
     print("\n[Withdrawing Funds]")
     account_id = input("Enter Account ID: ").strip()
-    account = get_account(account_id)
+    account = BankAccount.get_by_id(int(account_id))
     if not account:
+        print("❌ Account not found.")
         return
 
     amount = input("Enter withdrawal amount: ").strip()
-    try:
-        amount = float(amount)
-        if amount <= 0:
-            print("Invalid amount. Must be a positive number.")
-            return
-    except ValueError:
-        print("Invalid input. Please enter a numerical amount.")
+    if not amount.replace('.', '', 1).isdigit():
+        print("❌ Invalid withdrawal amount.")
         return
 
-    result = account.withdraw(amount)
-    print(result)
+    amount = float(amount)
+
+    try:
+        account.withdraw(amount)
+        print(f"✅ Withdrew ${amount:.2f} from Account {account_id}.")
+    except ValueError as e:
+        print(f"❌ {e}")
+
 
 def transfer_funds():
-    """Handles transferring funds between two accounts."""
+    """Handles fund transfers through the CLI"""
     print("\n[Transferring Funds]")
-    from_account_id = input("Enter Sender Account ID: ").strip()
-    to_account_id = input("Enter Receiver Account ID: ").strip()
-
-    if from_account_id == to_account_id:
-        print("Cannot transfer funds to the same account.")
-        return
-
-    from_account = get_account(from_account_id)
-    to_account = get_account(to_account_id)
-
-    if not from_account or not to_account:
-        return
-
+    sender_id = input("Enter source Account ID: ").strip()
+    recipient_id = input("Enter destination Account ID: ").strip()
     amount = input("Enter transfer amount: ").strip()
-    try:
-        amount = float(amount)
-        if amount <= 0:
-            print("Invalid amount. Must be a positive number.")
-            return
-    except ValueError:
-        print("Invalid input. Please enter a numerical amount.")
+
+    if not (sender_id.isdigit() and recipient_id.isdigit() and amount.replace('.', '', 1).isdigit()):
+        print("❌ Invalid input. Please enter valid numbers.")
         return
 
-    result = from_account.transfer(to_account_id, amount)
-    print(result)
+    sender_id, recipient_id = int(sender_id), int(recipient_id)
+    amount = float(amount)
+
+    sender_account = BankAccount.get_by_id(sender_id)
+    if not sender_account:
+        print(f"❌ Sender Account {sender_id} not found.")
+        return
+
+    try:
+        sender_account.transfer(recipient_id, amount)
+        print(f"✅ Transferred ${amount:.2f} from Account {sender_id} to Account {recipient_id}.")
+    except ValueError as e:
+        print(f"❌ {e}")
+
 
 def view_transaction_history():
     """Displays transaction history for an account."""
@@ -122,22 +149,16 @@ def view_transaction_history():
 
     account_id = input("Enter Account ID: ").strip()
 
-    # Ensure account_id is a valid integer
     if not account_id.isdigit():
-        print("Invalid input. Please enter a numeric Account ID.")
+        print("❌ Invalid input. Please enter a numeric Account ID.")
         return
 
     transactions = db.get_transaction_history(int(account_id))
 
-    if isinstance(transactions, str):  # Check for error message from db.py
-        print(transactions)
+    if not transactions:
+        print(f"ℹ️ No transactions found for Account {account_id}.")
         return
 
-    if not transactions:  # Handle case where no transactions exist
-        print(f"No transactions found for Account {account_id}.")
-        return
-
-    # Display transaction history in a readable format
     print("\nTransaction History:")
     print("--------------------------------------------------")
     print(f"{'ID':<5} {'Type':<12} {'Amount':<10} {'Timestamp'}")
@@ -149,6 +170,17 @@ def view_transaction_history():
 
     print("--------------------------------------------------")
 
+
+def get_account(account_id):
+    """Retrieve an account from the database and return a BankAccount object."""
+    account_data = db.get_account(account_id)  # Fetch from database
+    if not account_data:
+        print("❌ Account not found.")
+        return None
+
+    # Corrected parameter order
+    customer_id, account_type, balance, account_id = account_data
+    return BankAccount(customer_id, account_type, balance, account_id)
 
 
 def main():
@@ -173,7 +205,7 @@ def main():
             print("\nExiting Faux Banking System. Goodbye!")
             sys.exit()
         else:
-            print("\nInvalid choice. Please enter a number between 1 and 7.")
+            print("\n❌ Invalid choice. Please enter a number between 1 and 7.")
 
 if __name__ == "__main__":
     main()

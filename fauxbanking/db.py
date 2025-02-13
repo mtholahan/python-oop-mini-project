@@ -174,66 +174,6 @@ def withdraw(account_id, amount):
         return f"Error during withdrawal: {e}"
 
 
-def transfer(sender_account_id, receiver_account_id, amount):
-    """Transfers funds between two accounts and logs the transaction."""
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-
-        # Check sender balance
-        cursor.execute("SELECT Balance FROM Account WHERE AccountID = ?", (sender_account_id,))
-        sender_row = cursor.fetchone()
-        if not sender_row:
-            log_event("WARNING", f"Transfer failed: Sender Account {sender_account_id} not found.")
-            return "Sender account not found."
-
-        sender_balance = Decimal(sender_row[0])
-        if sender_balance < Decimal(amount):
-            log_event("WARNING", f"Transfer failed: Insufficient funds in Account {sender_account_id}.")
-            return "Insufficient funds."
-
-        # Deduct from sender
-        cursor.execute(
-            "UPDATE Account SET Balance = Balance - ? WHERE AccountID = ?",
-            (Decimal(amount), sender_account_id),
-        )
-
-        # Add to receiver
-        cursor.execute(
-            "UPDATE Account SET Balance = Balance + ? WHERE AccountID = ?",
-            (Decimal(amount), receiver_account_id),
-        )
-
-        # Insert into TransactionLog
-        cursor.execute(
-            """
-            INSERT INTO TransactionLog (AccountID, RelatedAccountID, TransactionType, Amount)
-            VALUES (?, ?, 'Transfer', ?)
-            """,
-            (sender_account_id, receiver_account_id, Decimal(amount)),
-        )
-
-        cursor.execute(
-            """
-            INSERT INTO TransactionLog (AccountID, RelatedAccountID, TransactionType, Amount)
-            VALUES (?, ?, 'Transfer', ?)
-            """,
-            (receiver_account_id, sender_account_id, Decimal(amount)),
-        )
-
-        conn.commit()
-        conn.close()
-
-        # Log this event
-        log_event("INFO", f"Transfer of ${amount:.2f} from Account {sender_account_id} to Account {receiver_account_id}.")
-
-        return f"Transferred ${amount:.2f} from account {sender_account_id} to account {receiver_account_id}."
-
-    except Exception as e:
-        log_event("ERROR", f"Transfer failed from Account {sender_account_id} to {receiver_account_id}: {e}")
-        return f"Error during transfer: {e}"
-
-
 
 def get_account(account_id):
     """Fetch account details from the database."""

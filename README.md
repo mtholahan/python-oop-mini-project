@@ -58,9 +58,6 @@ Simply select an option and follow the prompts.
 │   ├── db.py              # Database interaction logic
 │   ├── account.py         # Account class
 │   ├── customer.py        # Customer class
-│   ├── transaction.py     # Transaction class
-│   ├── transaction_log.py # Handles transaction history
-│   ├── bank.py            # Core banking logic
 │   ├── logs/              # Stores banking.log file
 ├── .env                   # Environment variables (DO NOT SHARE)
 ├── README.md              # Project documentation
