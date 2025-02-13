@@ -18,5 +18,5 @@ class Bank:
     
     def get_account_by_id(self, account_number: str):
         """Retrieves an account by its unique ID."""
-        return next((account for account in self._accounts if account.number_number == account_number), None)
+        return next((account for account in self._accounts if account.account_number == account_number), None)
     

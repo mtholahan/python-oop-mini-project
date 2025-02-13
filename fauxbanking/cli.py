@@ -1,5 +1,6 @@
 import sys
-import db # Import the database module
+import db
+from account import BankAccount
 
 def display_menu():
     """Display the main menu."""
@@ -19,33 +20,136 @@ def create_customer():
     last_name = input("Enter last name: ").strip()
     email = input("Enter email: ").strip()
     phone = input("Enter phone number (optional): ").strip() or None
-    db.create_customer(first_name, last_name, email, phone)
+    result = db.create_customer(first_name, last_name, email, phone)
+    print(result)
 
 def open_account():
-    """Placeholder function for opening an account."""
+    """Open a new account for an existing customer."""
     print("\n[Opening a New Account]")
     customer_id = input("Enter Customer ID: ").strip()
     account_type = input("Enter Account Type (Checking/Savings): ").strip().capitalize()
     if account_type not in ["Checking", "Savings"]:
         print("Invalid account type. Please enter 'Checking' or 'Savings'.")
         return
-    db.create_account(customer_id, account_type)
+
+    result = db.create_account(customer_id, account_type)
+    print(result)
+
+def get_account(account_id):
+    """Retrieve an account from the database and return a BankAccount object."""
+    account_data = db.get_account(account_id)  # Fetch from database
+    if not account_data:
+        print("Account not found.")
+        return None
+
+    account_id, account_type, balance, customer_id = account_data
+    return BankAccount(account_id, account_type, balance, customer_id)
 
 def deposit_funds():
-    """Placeholder function for depositing funds."""
-    print("\n[Depositing Funds] (Not yet implemented)")
+    """Handles depositing funds into an account."""
+    print("\n[Depositing Funds]")
+    account_id = input("Enter Account ID: ").strip()
+    account = get_account(account_id)
+    if not account:
+        return
+
+    amount = input("Enter deposit amount: ").strip()
+    try:
+        amount = float(amount)
+        if amount <= 0:
+            print("Invalid amount. Must be a positive number.")
+            return
+    except ValueError:
+        print("Invalid input. Please enter a numerical amount.")
+        return
+
+    result = account.deposit(amount)
+    print(result)
 
 def withdraw_funds():
-    """Placeholder function for withdrawing funds."""
-    print("\n[Withdrawing Funds] (Not yet implemented)")
+    """Handles withdrawing funds from an account."""
+    print("\n[Withdrawing Funds]")
+    account_id = input("Enter Account ID: ").strip()
+    account = get_account(account_id)
+    if not account:
+        return
+
+    amount = input("Enter withdrawal amount: ").strip()
+    try:
+        amount = float(amount)
+        if amount <= 0:
+            print("Invalid amount. Must be a positive number.")
+            return
+    except ValueError:
+        print("Invalid input. Please enter a numerical amount.")
+        return
+
+    result = account.withdraw(amount)
+    print(result)
 
 def transfer_funds():
-    """Placeholder function for transferring funds."""
-    print("\n[Transferring Funds] (Not yet implemented)")
+    """Handles transferring funds between two accounts."""
+    print("\n[Transferring Funds]")
+    from_account_id = input("Enter Sender Account ID: ").strip()
+    to_account_id = input("Enter Receiver Account ID: ").strip()
+
+    if from_account_id == to_account_id:
+        print("Cannot transfer funds to the same account.")
+        return
+
+    from_account = get_account(from_account_id)
+    to_account = get_account(to_account_id)
+
+    if not from_account or not to_account:
+        return
+
+    amount = input("Enter transfer amount: ").strip()
+    try:
+        amount = float(amount)
+        if amount <= 0:
+            print("Invalid amount. Must be a positive number.")
+            return
+    except ValueError:
+        print("Invalid input. Please enter a numerical amount.")
+        return
+
+    result = from_account.transfer(to_account_id, amount)
+    print(result)
 
 def view_transaction_history():
-    """Placeholder function for viewing transaction history."""
-    print("\n[Viewing Transaction History] (Not yet implemented)")
+    """Displays transaction history for an account."""
+    print("\n[Viewing Transaction History]")
+
+    account_id = input("Enter Account ID: ").strip()
+
+    # Ensure account_id is a valid integer
+    if not account_id.isdigit():
+        print("Invalid input. Please enter a numeric Account ID.")
+        return
+
+    transactions = db.get_transaction_history(int(account_id))
+
+    if isinstance(transactions, str):  # Check for error message from db.py
+        print(transactions)
+        return
+
+    if not transactions:  # Handle case where no transactions exist
+        print(f"No transactions found for Account {account_id}.")
+        return
+
+    # Display transaction history in a readable format
+    print("\nTransaction History:")
+    print("--------------------------------------------------")
+    print(f"{'ID':<5} {'Type':<12} {'Amount':<10} {'Timestamp'}")
+    print("--------------------------------------------------")
+
+    for txn in transactions:
+        txn_id, txn_type, amount, timestamp = txn
+        print(f"{txn_id:<5} {txn_type:<12} ${amount:<9} {timestamp}")
+
+    print("--------------------------------------------------")
+
+
 
 def main():
     """Main loop for the CLI."""

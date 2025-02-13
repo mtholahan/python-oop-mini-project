@@ -18,7 +18,7 @@ IF OBJECT_ID('dbo.Customer', 'U') IS NOT NULL DROP TABLE dbo.Customer;
 IF OBJECT_ID('dbo.[Log]', 'U') IS NOT NULL DROP TABLE dbo.[Log];
 GO
 
--- Customer Table: Stores user details
+-- Customer Table
 CREATE TABLE dbo.Customer (
     CustomerID INT IDENTITY(1,1) PRIMARY KEY,
     FirstName NVARCHAR(50) NOT NULL,
@@ -26,11 +26,11 @@ CREATE TABLE dbo.Customer (
     Email NVARCHAR(100) UNIQUE NOT NULL,
     PhoneNumber NVARCHAR(20) NULL,
     CreatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedAt DATETIME NULL
+    UpdatedAt DATETIME DEFAULT GETDATE()
 );
 GO
 
--- Account Table: Stores account details for each customer
+-- Account Table
 CREATE TABLE dbo.Account (
     AccountID INT IDENTITY(1,1) PRIMARY KEY,
     CustomerID INT NOT NULL,
@@ -41,22 +41,23 @@ CREATE TABLE dbo.Account (
 );
 GO
 
--- TransactionLog Table: Records all financial transactions
 CREATE TABLE dbo.TransactionLog (
     TransactionID INT IDENTITY(1,1) PRIMARY KEY,
     AccountID INT NOT NULL,
+    RelatedAccountID INT NULL, -- For transfers
     TransactionType NVARCHAR(20) CHECK (TransactionType IN ('Deposit', 'Withdrawal', 'Transfer')),
     Amount DECIMAL(18,2) CHECK (Amount > 0) NOT NULL,
-    [Timestamp] DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (AccountID) REFERENCES dbo.Account(AccountID) ON DELETE CASCADE
+    TransactionTimestamp DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (AccountID) REFERENCES dbo.Account(AccountID) ON DELETE CASCADE,
+    FOREIGN KEY (RelatedAccountID) REFERENCES dbo.Account(AccountID) ON DELETE NO ACTION
 );
 GO
 
--- Log Table: Stores system-level logs and errors
-CREATE TABLE dbo.[Log] (
+-- Log Table
+CREATE TABLE dbo.Log (
     LogID INT IDENTITY(1,1) PRIMARY KEY,
     LogLevel NVARCHAR(20) CHECK (LogLevel IN ('INFO', 'WARNING', 'ERROR')),
     Message NVARCHAR(MAX) NOT NULL,
-    [Timestamp] DATETIME DEFAULT GETDATE()
+    LogTimestamp DATETIME DEFAULT GETDATE()
 );
 GO
