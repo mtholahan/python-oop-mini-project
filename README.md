@@ -2,24 +2,24 @@
 
 
 ## 📖 Abstract
-This project implements a simplified banking system using Python object-oriented programming (OOP) principles, with a focus on modular design, class hierarchies, and UML modeling. The system models core banking entities such as customers, accounts, employees, loans, and credit cards, each with their own attributes and behaviors.
-
-Key features include:
-
-* Customer class with fields for first name, last name, and address.
-
-* Account class supporting checking and savings accounts, with deposit, withdrawal, and balance tracking methods.
-
-* Support for financial services such as loans and credit cards, implemented as additional classes.
-
-* Input handling through a command-line interface, allowing users to perform account operations interactively.
-
-* Error handling with Python exceptions to ensure the program responds gracefully to invalid operations.
-
-* Logging to both the console and a log file for runtime monitoring.
-
-A UML class diagram captures the system’s overall design, illustrating relationships among entities, while PEP-8 style and structured project organization ensure maintainability. The project deliverables include the UML diagram, Python source code, and a README file describing the system design and functionality.
-
+This project implements a simplified banking system using Python object-oriented programming (OOP) principles, with a focus on modular design, class hierarchies, and UML modeling. The system models core banking entities such as customers, accounts, employees, loans, and credit cards, each with their own attributes and behaviors.
+
+Key features include:
+
+* Customer class with fields for first name, last name, and address.
+
+* Account class supporting checking and savings accounts, with deposit, withdrawal, and balance tracking methods.
+
+* Support for financial services such as loans and credit cards, implemented as additional classes.
+
+* Input handling through a command-line interface, allowing users to perform account operations interactively.
+
+* Error handling with Python exceptions to ensure the program responds gracefully to invalid operations.
+
+* Logging to both the console and a log file for runtime monitoring.
+
+A UML class diagram captures the system’s overall design, illustrating relationships among entities, while PEP-8 style and structured project organization ensure maintainability. The project deliverables include the UML diagram, Python source code, and a README file describing the system design and functionality.
+
 This project provided hands-on practice with OOP design, UML class diagrams, error handling, and Python CLI development, while simulating real-world considerations in building financial applications
 
 
@@ -119,4 +119,4 @@ Screenshot of log file contents (errors/warnings captured)
 
 
 
-*Generated automatically via Python + Jinja2 + SQL Server table `tblMiniProjectProgress` on 09-15-2025 00:58:14*
+*Generated automatically via Python + Jinja2 + SQL Server table `tblMiniProjectProgress` on 09-15-2025 18:04:19*
