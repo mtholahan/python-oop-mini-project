@@ -6,17 +6,12 @@ This project implements a simplified banking system using Python object-oriented
 
 Key features include:
 
-* Customer class with fields for first name, last name, and address.
-
-* Account class supporting checking and savings accounts, with deposit, withdrawal, and balance tracking methods.
-
-* Support for financial services such as loans and credit cards, implemented as additional classes.
-
-* Input handling through a command-line interface, allowing users to perform account operations interactively.
-
-* Error handling with Python exceptions to ensure the program responds gracefully to invalid operations.
-
-* Logging to both the console and a log file for runtime monitoring.
+- Customer class with fields for first name, last name, and address.
+- Account class supporting checking and savings accounts, with deposit, withdrawal, and balance tracking methods.
+- Support for financial services such as loans and credit cards, implemented as additional classes.
+- Input handling through a command-line interface, allowing users to perform account operations interactively.
+- Error handling with Python exceptions to ensure the program responds gracefully to invalid operations.
+- Logging to both the console and a log file for runtime monitoring.
 
 A UML class diagram captures the system’s overall design, illustrating relationships among entities, while PEP-8 style and structured project organization ensure maintainability. The project deliverables include the UML diagram, Python source code, and a README file describing the system design and functionality.
 
@@ -70,29 +65,25 @@ This project provided hands-on practice with OOP design, UML class diagrams, err
 
 ## 📸 Evidence
 
-![uml_diagram.png](./evidence/uml_diagram.png)  
-Screenshot of UML class diagram
-
-![cli_session.png](./evidence/cli_session.png)  
-Screenshot of CLI session showing deposit and withdrawal
-
-![logs_example.png](./evidence/logs_example.png)  
-Screenshot of log file contents (errors/warnings captured)
+![01_umb_banking_system.png](./evidence/01_umb_banking_system.png)  
+Screenshot of UML Banking System
 
 
 
 
 ## 📎 Deliverables
 
-- [`- Python source code implementing OOP banking system`](./deliverables/- Python source code implementing OOP banking system)
+- [`db.py`](./deliverables/db.py)
 
-- [`- UML class diagram (PNG/PDF) in deliverables/`](./deliverables/- UML class diagram (PNG/PDF) in deliverables/)
+- [`account.py`](./deliverables/account.py)
 
-- [`- requirements.txt`](./deliverables/- requirements.txt)
+- [`cli.py`](./deliverables/cli.py)
 
-- [`- Raw application log: deliverables/log_oop.txt`](./deliverables/- Raw application log: deliverables/log_oop.txt)
+- [`customer.py`](./deliverables/customer.py)
 
-- [`- README.md explaining design and usage`](./deliverables/- README.md explaining design and usage)
+- [`UML_Banking_System.pdf`](./deliverables/UML_Banking_System.pdf)
+
+- [`banking_system_DDL.sql`](./deliverables/banking_system_DDL.sql)
 
 
 
@@ -118,5 +109,4 @@ Screenshot of log file contents (errors/warnings captured)
 - Deactivate and delete virtual environment
 
 
-
-*Generated automatically via Python + Jinja2 + SQL Server table `tblMiniProjectProgress` on 09-15-2025 19:27:12*
+*Generated automatically via Python + Jinja2 + SQL Server table `tblMiniProjectProgress` on 09-17-2025 18:21:29*
