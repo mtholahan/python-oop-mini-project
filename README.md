@@ -65,7 +65,7 @@ This project provided hands-on practice with OOP design, UML class diagrams, err
 
 ## 📸 Evidence
 
-![01_umb_banking_system.png](./evidence/01_umb_banking_system.png)  
+![01_uml_banking_system.png](./evidence/01_uml_banking_system.png)  
 Screenshot of UML Banking System
 
 
@@ -109,4 +109,4 @@ Screenshot of UML Banking System
 - Deactivate and delete virtual environment
 
 
-*Generated automatically via Python + Jinja2 + SQL Server table `tblMiniProjectProgress` on 09-17-2025 18:21:29*
+*Generated automatically via Python + Jinja2 + SQL Server table `tblMiniProjectProgress` on 09-17-2025 18:23:14*
