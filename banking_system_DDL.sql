@@ -1,3 +1,10 @@
+/*
+* Date: 2-Feb-2025
+* Author: Mark Holahan
+* Purpose: python-oop-mini-project DDL
+* RDBMS: Stood up a SQL Server instance on Azure
+*/
+
 USE [FauxBankingSystemDB]
 GO
 
